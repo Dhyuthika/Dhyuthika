@@ -1,71 +1,61 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+//import { StatusBar } from "expo-status-bar";
+import React,{Component} from 'react';
+import { Button, StyleSheet, Text, View } from "react-native";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { change_count } from "./src/actions/counts";
 
-import React from 'react';
-import { StyleSheet, View, Text, Image, Button, Alert } from 'react-native';
+// import { connect } from "react-redux";
 
-import RazorpayCheckout from 'react-native-razorpay';
+ class App extends Component{
 
-function App () {
-
-  const handlePayment = () => {
-    var options = {
-      name: 'In Makes',
-      description: "For test payment",
-      currency: 'INR',
-      amount: 50000,
-      key: 'rzp_test_3bVAi7XMPRnnwe',
-      prefill: {
-        email: 'ss@gmail.com',
-        contact: '9191919191',
-        name: 'Tester'
-      },
-      theme: {color: '#f37251'}
-    }
-    RazorpayCheckout.open(options).then((data) => {
-      console.log("data", data)
-Alert.alert('Success');
-    })
-    .catch((error) => {
-Alert.alert(`Error : ${error.code} | ${error.description}`)
-    })
+  decreamentcount(){
+    let {count, actions} = this.props;
+    count --;
+    this.props.COUNTER_CHANGE(count)
+    
   }
-  return (
-    <View style={styles.container}>
-<Image 
-style={styles.productImg}
-source={require("./assets/dark.jpg")} />
-<Text style={styles.text}>InMakes</Text>
-<Text style={styles.text}>Rs. 500</Text>
-<View style={styles.button}>
-  <Button title="Buy" onPress={() => handlePayment()}/>
-</View>
-    </View>
-  );
-};
 
-const styles = StyleSheet.create({
-container: {
-  flex: 1,
-  alignItems: 'center',
-  justifyContent: 'center'
-},
-productImg: {
-  width: 200,
-  height: 200,
-  resizeMode: 'contain'
-},
-text:{
-  fontSize: 25
-},
-button: {
-  width:200
+  increamentcount(){
+    let {count, actions} = this.props;
+    count ++;
+    this.props.COUNTER_CHANGE(count)
+  }
+
+
+  
+
+  
+  
+  render(){
+    
+    const {count} = this.props;
+    return(
+      <View style={{flex:1, backgroundColor:'#fff', justifyContent:'center', alignItems:'center'}}>
+        <Text>{count}</Text>
+        <Button
+        onPress={()=>this.increamentcount()}
+        title='increament'></Button>
+
+        <Button title='Decreament'
+        onPress={()=>this.decreamentcount()}></Button>
+        <StatusBar style='auto'></StatusBar>
+      </View>
+    )
+  }
 }
-});
 
-export default App;
+  const mapStateToProps = (state) =>{
+    count: state.counter.count
+  }
+
+  const mapDispatchToProps = (dispatch) =>{
+    return{
+      CounterChange: (count) => dispatch(change_count(count))
+    }
+  
+  }
+
+
+
+export default connect(mapStateToProps, mapDispatchToProps)
